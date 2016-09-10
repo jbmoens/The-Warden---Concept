@@ -4,8 +4,8 @@ using System;
 
 public class GameBoard
 {
-    public int chunkCountX = 10;
-    public int chunkCountZ = 10;
+    public int chunkCountX = 5;
+    public int chunkCountZ = 5;
 
     int mapSizeX;
     int mapSizeZ;

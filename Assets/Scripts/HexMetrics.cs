@@ -30,7 +30,7 @@ public static class HexMetrics {
 //    public const float cellPerturbStrength = 4f;
     public const float cellPerturbStrength = 0.0f;
 
-    //    public const float elevationPerturbStrength = 1.5f;
+//    public const float elevationPerturbStrength = 1.5f;
     public const float elevationPerturbStrength = 0.0f;
 
     public const float streamBedElevationOffset = -1.75f;
@@ -39,7 +39,8 @@ public static class HexMetrics {
 
 	public const float noiseScale = 0.003f;
 
-	public const int chunkSizeX = 10, chunkSizeZ = 10;
+	public const int chunkSizeX = 10;
+	public const int chunkSizeZ = 10;
 
 	static Vector3[] corners = {
 		new Vector3(0f, 0f, outerRadius),
