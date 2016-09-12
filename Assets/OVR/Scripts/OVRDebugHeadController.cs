@@ -42,7 +42,7 @@ public class OVRDebugHeadController : MonoBehaviour
 	[SerializeField]
 	public bool AllowPitchLook = false;
 	[SerializeField]
-	public bool AllowYawLook = false;
+	public bool AllowYawLook = true;
 	[SerializeField]
 	public bool InvertPitch = false;
 	[SerializeField]
