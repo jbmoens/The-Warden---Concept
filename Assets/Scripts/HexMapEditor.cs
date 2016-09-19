@@ -1,11 +1,14 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class HexMapEditor : MonoBehaviour {
+public class HexMapEditor : MonoBehaviour
+{
 
 	public Color[] colors;
 
 	public HexGrid hexGrid;
+	public OVRPlayerController playerController;
+	protected CharacterController controller;
 
 	int activeElevation;
 	int activeWaterLevel;
@@ -18,8 +21,11 @@ public class HexMapEditor : MonoBehaviour {
 	bool applyElevation = true;
 	bool applyWaterLevel = true;
 
-	enum OptionalToggle {
-		Ignore, Yes, No
+	enum OptionalToggle
+	{
+		Ignore,
+		Yes,
+		No
 	}
 
 	OptionalToggle riverMode, roadMode;
@@ -28,86 +34,113 @@ public class HexMapEditor : MonoBehaviour {
 	HexDirection dragDirection;
 	HexCell previousCell;
 
-	public void SelectColor (int index) {
+	public void SelectColor (int index)
+	{
 		applyColor = index >= 0;
 		if (applyColor) {
-			activeColor = colors[index];
+			activeColor = colors [index];
 		}
 	}
 
-	public void SetApplyElevation (bool toggle) {
+	public void SetApplyElevation (bool toggle)
+	{
 		applyElevation = toggle;
 	}
 
-	public void SetElevation (float elevation) {
+	public void SetElevation (float elevation)
+	{
 		activeElevation = (int)elevation;
 	}
 
-	public void SetApplyWaterLevel (bool toggle) {
+	public void SetApplyWaterLevel (bool toggle)
+	{
 		applyWaterLevel = toggle;
 	}
-	public void SetWaterLevel (float level) {
+
+	public void SetWaterLevel (float level)
+	{
 		activeWaterLevel = (int)level;
 	}
 
-	public void SetBrushSize (float size) {
+	public void SetBrushSize (float size)
+	{
 		brushSize = (int)size;
 	}
 
-	public void SetRiverMode (int mode) {
+	public void SetRiverMode (int mode)
+	{
 		riverMode = (OptionalToggle)mode;
 	}
 
-	public void SetRoadMode (int mode) {
+	public void SetRoadMode (int mode)
+	{
 		roadMode = (OptionalToggle)mode;
 	}
 
-	public void ShowUI (bool visible) {
-		hexGrid.ShowUI(visible);
+	public void ShowUI (bool visible)
+	{
+		hexGrid.ShowUI (visible);
 	}
 
-	void Awake () {
-		SelectColor(0);
+	void Awake ()
+	{
+		SelectColor (0);
+
+		controller = playerController.gameObject.GetComponent<CharacterController> ();
+		if (controller == null)
+			Debug.LogError ("HexMapEditor: could not attached CharacterController");
 	}
 
-	void Update () {
+	void Update ()
+	{
 		if (
-			Input.GetMouseButton(0) &&
-			!EventSystem.current.IsPointerOverGameObject()
-		) {
-			HandleInput();
-		}
-		else {
+			Input.GetMouseButton (0) &&
+			!EventSystem.current.IsPointerOverGameObject ()) {
+			HandleInput ();
+		} else {
 			previousCell = null;
 		}
 	}
 
-	void HandleInput () {
-		Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+	void HandleInput ()
+	{
+		Vector3 center = new Vector3 (
+			                 Camera.main.pixelWidth / 2,
+			                 Camera.main.pixelHeight / 2,
+			                 0
+		                 );
+//		Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+		Ray inputRay = Camera.main.ScreenPointToRay (center);
 		RaycastHit hit;
-		if (Physics.Raycast(inputRay, out hit)) {
-			HexCell currentCell = hexGrid.GetCell(hit.point);
-			if (previousCell && previousCell != currentCell) {
-				ValidateDrag(currentCell);
-			}
-			else {
-				isDrag = false;
-			}
-			EditCells(currentCell);
-			previousCell = currentCell;
+		if (Physics.Raycast (inputRay, out hit)) {
+			HexCell currentCell = hexGrid.GetCell (hit.point);
+			controller.gameObject.transform.position = currentCell.Position;
 		}
-		else {
-			previousCell = null;
-		}
+
+//		if (Physics.Raycast(inputRay, out hit)) {
+//			HexCell currentCell = hexGrid.GetCell(hit.point);
+//			if (previousCell && previousCell != currentCell) {
+//				ValidateDrag(currentCell);
+//			}
+//			else {
+//				isDrag = false;
+//			}
+//			EditCells(currentCell);
+//			previousCell = currentCell;
+//		}
+//		else {
+//			previousCell = null;
+//		}
+
 	}
 
-	void ValidateDrag (HexCell currentCell) {
+	void ValidateDrag (HexCell currentCell)
+	{
 		for (
 			dragDirection = HexDirection.NE;
 			dragDirection <= HexDirection.NW;
-			dragDirection++
-		) {
-			if (previousCell.GetNeighbor(dragDirection) == currentCell) {
+			dragDirection++) {
+			if (previousCell.GetNeighbor (dragDirection) == currentCell) {
 				isDrag = true;
 				return;
 			}
@@ -115,23 +148,25 @@ public class HexMapEditor : MonoBehaviour {
 		isDrag = false;
 	}
 
-	void EditCells (HexCell center) {
+	void EditCells (HexCell center)
+	{
 		int centerX = center.coordinates.X;
 		int centerZ = center.coordinates.Z;
 
 		for (int r = 0, z = centerZ - brushSize; z <= centerZ; z++, r++) {
 			for (int x = centerX - r; x <= centerX + brushSize; x++) {
-				EditCell(hexGrid.GetCell(new HexCoordinates(x, z)));
+				EditCell (hexGrid.GetCell (new HexCoordinates (x, z)));
 			}
 		}
 		for (int r = 0, z = centerZ + brushSize; z > centerZ; z--, r++) {
 			for (int x = centerX - brushSize; x <= centerX + r; x++) {
-				EditCell(hexGrid.GetCell(new HexCoordinates(x, z)));
+				EditCell (hexGrid.GetCell (new HexCoordinates (x, z)));
 			}
 		}
 	}
 
-	void EditCell (HexCell cell) {
+	void EditCell (HexCell cell)
+	{
 		if (cell) {
 			if (applyColor) {
 				cell.Color = activeColor;
@@ -143,19 +178,19 @@ public class HexMapEditor : MonoBehaviour {
 				cell.WaterLevel = activeWaterLevel;
 			}
 			if (riverMode == OptionalToggle.No) {
-				cell.RemoveRiver();
+				cell.RemoveRiver ();
 			}
 			if (roadMode == OptionalToggle.No) {
-				cell.RemoveRoads();
+				cell.RemoveRoads ();
 			}
 			if (isDrag) {
-				HexCell otherCell = cell.GetNeighbor(dragDirection.Opposite());
+				HexCell otherCell = cell.GetNeighbor (dragDirection.Opposite ());
 				if (otherCell) {
 					if (riverMode == OptionalToggle.Yes) {
-						otherCell.SetOutgoingRiver(dragDirection);
+						otherCell.SetOutgoingRiver (dragDirection);
 					}
 					if (roadMode == OptionalToggle.Yes) {
-						otherCell.AddRoad(dragDirection);
+						otherCell.AddRoad (dragDirection);
 					}
 				}
 			}

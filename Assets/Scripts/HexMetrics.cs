@@ -5,11 +5,12 @@ public static class HexMetrics {
 	public const float outerToInner = 0.866025404f;
 	public const float innerToOuter = 1f / outerToInner;
 
-	public const float outerRadius = 10f;
+	public const float outerRadius = 2f;
+	public const float elevationStep = 0.5f;
 
 	public const float innerRadius = outerRadius * outerToInner;
 
-	public const float solidFactor = 0.8f;
+	public const float solidFactor = 0.9f;
 
 	public const float blendFactor = 1f - solidFactor;
 
@@ -17,9 +18,7 @@ public static class HexMetrics {
 
 	public const float waterBlendFactor = 1f - waterFactor;
 
-	public const float elevationStep = 3f;
-
-	public const int terracesPerSlope = 2;
+	public const int terracesPerSlope = 0;
 
 	public const int terraceSteps = terracesPerSlope * 2 + 1;
 

@@ -36,7 +36,7 @@ public class HexGrid : MonoBehaviour {
 
         for (int i = 0; i < gameBoard.elevationMap.Length; i++)
         {
-            cells[i].Elevation = gameBoard.elevationMap[i];
+			cells[i].Elevation = gameBoard.elevationMap[i];
             cells[i].Color = gameBoard.colorMap[i];
         }
 	}

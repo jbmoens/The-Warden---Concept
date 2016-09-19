@@ -165,7 +165,9 @@ public class OVRGazePointer : MonoBehaviour {
     /// <param name="normal"></param>
     public void SetPosition(Vector3 pos, Vector3 normal)
     {
-        transform.position = pos;
+//		Vector3 fwd = cameraRig.centerEyeAnchor.transform.forward;
+//		transform.position = pos + fwd * 10.0f;
+		transform.position = pos;
 
         // Set the rotation to match the normal of the surface it's on. For the other degree of freedom use
         // the direction of movement so that trail effects etc are easier
@@ -177,7 +179,8 @@ public class OVRGazePointer : MonoBehaviour {
         depth = (cameraRig.centerEyeAnchor.transform.position - pos).magnitude;
 
         //set scale based on depth
-        currentScale = depth * depthScaleMultiplier;
+//		currentScale = depth * depthScaleMultiplier;
+		currentScale = depthScaleMultiplier;
         transform.localScale = new Vector3(currentScale, currentScale, currentScale);
 
         positionSetsThisFrame++;
